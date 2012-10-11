@@ -15,5 +15,5 @@ test: compile
 clean: rebar
 	$(REBAR) clean
 
-distclean: 
+distclean:
 	rm $(REBAR)

@@ -8,9 +8,9 @@
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
 %% You may obtain a copy of the License at
-%% 
+%%
 %%     http://www.apache.org/licenses/LICENSE-2.0
-%% 
+%%
 %% Unless required by applicable law or agreed to in writing, software
 %% distributed under the License is distributed on an "AS IS" BASIS,
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,11 +21,11 @@
 -author("Maas-Maarten Zeeman <mmzeeman@xs4all.nl>").
 
 %% higher-level export
--export([open/1, open/2, 
+-export([open/1, open/2,
 	 exec/2, exec/3,
-	 prepare/2, prepare/3, 
-	 step/1, step/2, 
-	 bind/2, bind/3, 
+	 prepare/2, prepare/3,
+	 step/1, step/2,
+	 bind/2, bind/3,
 	 fetchone/1,
 	 fetchall/1,
 	 column_names/1, column_names/2,
@@ -56,7 +56,7 @@ open(Filename, Timeout) ->
 	    {error, Other}
     end.
 
-%% @doc Execute a sql statement, returns a list with tuples. 
+%% @doc Execute a sql statement, returns a list with tuples.
 q(Sql, Connection) ->
     q(Sql, [], Connection).
 
@@ -69,18 +69,18 @@ q(Sql, Args, Connection) ->
     ok = bind(Statement, Args),
     fetchall(Statement).
 
-%% 
+%%
 map(F, Sql, Connection) ->
     {ok, Statement} = prepare(Sql, Connection),
     map_s(F, Statement).
 
-%% 
+%%
 foreach(F, Sql, Connection) ->
     {ok, Statement} = prepare(Sql, Connection),
     foreach_s(F, Statement).
 
 %%
-foreach_s(F, Statement) when is_function(F, 1) -> 
+foreach_s(F, Statement) when is_function(F, 1) ->
     case try_step(Statement, 0) of
 	'$done' -> ok;
 	Row when is_tuple(Row) ->
@@ -91,7 +91,7 @@ foreach_s(F, Statement) when is_function(F, 2) ->
     ColumnNames = column_names(Statement),
     case try_step(Statement, 0) of
 	'$done' -> ok;
-	Row when is_tuple(Row) -> 
+	Row when is_tuple(Row) ->
 	    F(ColumnNames, Row),
 	    foreach_s(F, Statement)
     end.
@@ -100,14 +100,14 @@ foreach_s(F, Statement) when is_function(F, 2) ->
 map_s(F, Statement) when is_function(F, 1) ->
     case try_step(Statement, 0) of
 	'$done' -> [];
-	Row when is_tuple(Row) -> 
+	Row when is_tuple(Row) ->
 	    [F(Row) | map_s(F, Statement)]
     end;
 map_s(F, Statement) when is_function(F, 2) ->
     ColumnNames = column_names(Statement),
     case try_step(Statement, 0) of
 	'$done' -> [];
-	Row when is_tuple(Row) -> 
+	Row when is_tuple(Row) ->
 	    [F(ColumnNames, Row) | map_s(F, Statement)]
     end.
 
@@ -115,38 +115,38 @@ map_s(F, Statement) when is_function(F, 2) ->
 fetchone(Statement) ->
     case try_step(Statement, 0) of
 	'$done' -> ok;
-	Row when is_tuple(Row) -> 
+	Row when is_tuple(Row) ->
 	    Row
     end.
 
-%%    
+%%
 fetchall(Statement) ->
     case try_step(Statement, 0) of
-	'$done' -> 
+	'$done' ->
 	    [];
 	Row when is_tuple(Row) ->
 	    [Row | fetchall(Statement)]
-    end.  
+    end.
 
-%% Try the step, when the database is busy, 
+%% Try the step, when the database is busy,
 try_step(_Statement, Tries) when Tries > 5 ->
     throw(too_many_tries);
 try_step(Statement, Tries) ->
     case esqlite3:step(Statement) of
-	'$busy' -> 
+	'$busy' ->
 	    timer:sleep(100 * Tries),
 	    try_step(Statement, Tries + 1);
-	Something -> 
+	Something ->
 	    Something
     end.
-	    
+
 %% @doc Execute Sql statement, returns the number of affected rows.
 %%
 %% @spec exec(iolist(), connection()) -> integer() |  {error, error_message()}
 exec(Sql, Connection) ->
     exec(Sql, Connection, ?DEFAULT_TIMEOUT).
 
-%% @doc Execute 
+%% @doc Execute
 %%
 %% @spec exec(iolist(), connection(), timeout()) -> integer() | {error, error_message()}
 exec(Sql, Connection, Timeout) ->
@@ -174,7 +174,7 @@ prepare(Sql, Connection, Timeout) ->
 step(Stmt) ->
     step(Stmt, ?DEFAULT_TIMEOUT).
 
-%% @doc 
+%% @doc
 %%
 %% @spec step(prepared_statement(), timeout()) -> tuple()
 step(Stmt, Timeout) ->
@@ -225,7 +225,7 @@ add_eos(IoList) ->
     [IoList, 0].
 
 receive_answer(Ref, Timeout) ->
-    receive 
+    receive
 	{Ref, Resp} ->
 	    Resp;
 	Other ->
@@ -234,7 +234,7 @@ receive_answer(Ref, Timeout) ->
 	    throw({error, timeout, Ref})
     end.
 
-    
+
 
 
 

@@ -37,10 +37,10 @@ prepare_test() ->
     esqlite3:exec("begin;", Db),
     esqlite3:exec("create table test_table(one varchar(10), two int);", Db),
     {ok, Statement} = esqlite3:prepare("insert into test_table values(\"one\", 2)", Db),
-    
+
     '$done' = esqlite3:step(Statement),
 
-    ok = esqlite3:exec(["insert into test_table values(", "\"hello4\"", ",", "13" ");"], Db), 
+    ok = esqlite3:exec(["insert into test_table values(", "\"hello4\"", ",", "13" ");"], Db),
 
     %% Check if the values are there.
     [{"one", 2}, {"hello4", 13}] = esqlite3:q("select * from test_table order by two", Db),
@@ -82,9 +82,9 @@ column_names_test() ->
     ok = esqlite3:exec("commit;", Db),
 
     {ok, Stmt} = esqlite3:prepare("select * from test_table", Db),
-    
+
     {one, two} = esqlite3:column_names(Stmt),
-    
+
     ok.
 
 foreach_test() ->
@@ -98,21 +98,21 @@ foreach_test() ->
     ok = esqlite3:exec("commit;", Db),
 
     F = fun(Row) ->
-		case Row of 
+		case Row of
 		    {Key, Value} ->
 			put(Key, Value);
 		    _ ->
 			ok
 		end
 	end,
-    
+
     esqlite3:foreach(F, "select * from test_table;", Db),
-    
+
     10 = get("hello1"),
     11 = get("hello2"),
-    12 = get("hello3"), 
+    12 = get("hello3"),
     13 = get("hello4"),
-    
+
     ok.
 
 map_test() ->
@@ -126,11 +126,11 @@ map_test() ->
     ok = esqlite3:exec("commit;", Db),
 
     F = fun(Row) -> Row end,
-    
+
     [{"hello1",10},{"hello2",11},{"hello3",12},{"hello4",13}] = esqlite3:map(F, "select * from test_table", Db),
 
     %% Test that when the row-names are added..
-    Assoc = fun(Names, Row) -> 
+    Assoc = fun(Names, Row) ->
 		    lists:zip(tuple_to_list(Names), tuple_to_list(Row))
 	    end,
 
@@ -138,9 +138,9 @@ map_test() ->
      [{one,"hello2"},{two,11}],
      [{one,"hello3"},{two,12}],
      [{one,"hello4"},{two,13}]]  = esqlite3:map(Assoc, "select * from test_table", Db),
-    
+
     ok.
-    
+
 
 %%gen_db_test() ->
  %%   {ok, Conn} = gen_db:open(sqlite, ":memory:"),
@@ -153,18 +153,18 @@ map_test() ->
 
 
 
-    
-	 
 
-    
 
-    
 
-    
 
-    
-    
 
-    
-    
-    
+
+
+
+
+
+
+
+
+
+

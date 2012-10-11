@@ -8,9 +8,9 @@
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
 %% You may obtain a copy of the License at
-%% 
+%%
 %%     http://www.apache.org/licenses/LICENSE-2.0
-%% 
+%%
 %% Unless required by applicable law or agreed to in writing, software
 %% distributed under the License is distributed on an "AS IS" BASIS,
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,9 @@
 -author("Maas-Maarten Zeeman <mmzeeman@xs4all.nl>").
 
 %% low-level exports
--export([start/0, 
-	 open/4, 
-	 exec/4, 
+-export([start/0,
+	 open/4,
+	 exec/4,
 	 prepare/4,
 	 step/3,
 	 finalize/3,
@@ -37,23 +37,23 @@
 init() ->
     ok = erlang:load_nif(code:priv_dir(esqlite) ++ "/esqlite3_nif", 0).
 
-%% @doc Start a low level thread which will can handle sqlite3 calls. 
+%% @doc Start a low level thread which will can handle sqlite3 calls.
 %%
 %% @spec start() -> {ok, connection()} | {error, msg()}
 start() ->
     exit(nif_library_not_loaded).
 
 %% @doc Open the specified sqlite3 database.
-%% 
+%%
 %% Sends an asynchronous open command over the connection and returns
-%% ok immediately. When the database is opened 
+%% ok immediately. When the database is opened
 %%
 %%  @spec open(connection(), reference(), pid(), string()) -> ok | {error, message()}
 open(_Db, _Ref, _Dest, _Filename) ->
     exit(nif_library_not_loaded).
 
 %% @doc Exec the query.
-%% 
+%%
 %% Sends an asynchronous exec command over the connection and returns
 %% ok immediately.
 %%
@@ -82,15 +82,15 @@ step(_Stmt, _Ref, _Dest) ->
 finalize(_Stmt, _Ref, _Dest) ->
     exit(nif_library_not_loaded).
 
-%% @doc Bind parameters to a prepared statement. 
+%% @doc Bind parameters to a prepared statement.
 %%
-%% @spec bind(statement(), reference(), pid(), []) -> ok | {error, message()} 
+%% @spec bind(statement(), reference(), pid(), []) -> ok | {error, message()}
 bind(_Stmt, _Ref, _Dest, _Args) ->
     exit(nif_library_not_loaded).
 
 %% @doc Retrieve the column names of the prepared statement
 %%
-%% @spec column_names(statement(), reference(), pid()) -> {ok, tuple()} | {error, message()} 
+%% @spec column_names(statement(), reference(), pid()) -> {ok, tuple()} | {error, message()}
 column_names(_Stmt, _Ref, _Dest) ->
     exit(nif_library_not_loaded).
 
@@ -100,7 +100,7 @@ column_names(_Stmt, _Ref, _Dest) ->
 close(_Db, _Ref, _Dest) ->
     exit(nif_library_not_loaded).
 
-    
+
 
 
 
