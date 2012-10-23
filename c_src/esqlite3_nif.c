@@ -20,6 +20,7 @@
 
 #include <erl_nif.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <stdio.h> /* for debugging */
 
@@ -230,6 +231,7 @@ do_prepare(ErlNifEnv *env, esqlite_connection *conn, const ERL_NIF_TERM arg)
      ERL_NIF_TERM esqlite_stmt;
      const char *tail;
      int rc;
+     int retries = 0;
 
      enif_inspect_iolist_as_binary(env, arg, &bin);
 
@@ -237,7 +239,10 @@ do_prepare(ErlNifEnv *env, esqlite_connection *conn, const ERL_NIF_TERM arg)
      if(!stmt)
 	  return make_error_tuple(env, "no_memory");
 
-     rc = sqlite3_prepare_v2(conn->db, (char *) bin.data, bin.size, &(stmt->statement), &tail);
+     do {
+       rc = sqlite3_prepare_v2(conn->db, (char *) bin.data, bin.size, &(stmt->statement), &tail);
+       usleep(retries * 100);
+     } while (rc == SQLITE_BUSY && retries++ < 100);
      if(rc != SQLITE_OK)
 	  return make_sqlite3_error_tuple(env, sqlite3_errmsg(conn->db));
 
